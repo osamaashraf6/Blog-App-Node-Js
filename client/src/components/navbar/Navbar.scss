@@ -1,0 +1,50 @@
+nav {
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .parnav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .brand {
+      flex-grow: 10;
+
+      a {
+        font-size: 30px;
+        background-color: aliceblue;
+        width: 40px;
+        padding: 14px;
+        border-radius: 50%;
+        border: 1px solid;
+      }
+    }
+    ul {
+      display: flex;
+      gap: 4px;
+      flex-grow: 1;
+      a {
+        color: #000;
+        padding: 13px;
+      }
+    }
+    .user {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 13px;
+
+      a {
+        background-color: rgb(110 201 176);
+        display: block;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+      }
+    }
+  }
+}
