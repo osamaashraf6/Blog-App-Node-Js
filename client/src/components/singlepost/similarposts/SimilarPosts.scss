@@ -1,0 +1,26 @@
+.other-posts {
+  padding: 20px 20px 20px 0;
+}
+.posts {
+  .post {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 15px;
+
+    .post-responsive {
+      width: 283px;
+    }
+  }
+}
+
+a.read {
+  display: block;
+  width: 103px;
+  padding: 11px;
+  border: 1px solid rgb(35, 151, 106);
+  border-radius: 3px;
+  background-color: #fff;
+  color: rgb(35, 151, 106);
+  cursor: pointer;
+}

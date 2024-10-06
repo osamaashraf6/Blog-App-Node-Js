@@ -1,0 +1,62 @@
+.register-heading,
+.login-heading {
+  background-color: rgb(167, 237, 217);
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(35 151 106);
+}
+.register-heading {
+  top: 20%;
+}
+.login-heading {
+  top: 28%;
+}
+section.register {
+  height: 100vh;
+  background-color: rgb(167 237 217);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .wrapper {
+    width: 342px;
+    background-color: #fff;
+    border-radius: 5px;
+    height: fit-content;
+    padding: 28px;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 15px;
+
+      input {
+        border: 0;
+        border-bottom: 1px solid #eee;
+        outline: 0;
+        padding: 15px;
+        font-size: 15px;
+        width: 100%;
+      }
+    }
+    button {
+      border: 0;
+      outline: 0;
+      padding: 15px;
+      font-size: 15px;
+      width: 80%;
+      border-radius: 5px;
+      display: block;
+      margin: auto;
+      margin-bottom: 15px;
+      background-color: rgb(35 151 106);
+      color: #fff;
+      cursor: pointer;
+    }
+    a {
+      color: rgb(108 200 150);
+    }
+  }
+}

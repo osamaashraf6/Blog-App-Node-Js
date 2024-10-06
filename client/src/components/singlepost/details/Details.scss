@@ -1,0 +1,25 @@
+.single-responsive {
+  width: 48vw;
+  height: 38vh;
+}
+.post-control {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  .userimg-responsive {
+    width: 60px;
+    height: 60px;
+    img {
+      border-radius: 50%;
+    }
+  }
+}
+h2.heading-post {
+  font-size: 38px;
+}
+p {
+  line-height: 1.7;
+  font-size: 18px;
+  text-align: justify;
+}
