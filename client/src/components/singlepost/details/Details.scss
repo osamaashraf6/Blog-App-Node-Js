@@ -1,6 +1,6 @@
 .single-responsive {
   width: 48vw;
-  height: 38vh;
+  height: 48vh;
 }
 .post-control {
   display: flex;
@@ -22,4 +22,11 @@ p {
   line-height: 1.7;
   font-size: 18px;
   text-align: justify;
+}
+.userimg-responsive{
+  width: 60px;
+    height: 60px;
+    img {
+      border-radius: 50%;
+    }
 }

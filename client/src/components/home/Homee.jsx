@@ -1,44 +1,118 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Navbar from "../navbar/Navbar";
 import Footer from "../footer/Footer";
 import { Link } from "react-router-dom";
-import { posts } from "../../utils/data";
 import "./Homee.scss";
+import usePost from "../../hooks/postsHook";
+import globalService from "../../services/globalService";
+import { format } from "timeago.js";
 
 const Homee = () => {
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    setData(posts);
-  }, []);
+  const [page, setPage] = useState(1);
+  const { getAllPostQuery } = usePost();
+  const { isPending, data } = getAllPostQuery({
+    limit: 2,
+    page,
+    sort: "title",
+  });
+  const changePage = (page) => {
+    setPage(page);
+  };
   return (
     <>
       <Navbar />
       <section className="home-page" id="home-page">
         <div className="container">
-          {data.map((item) => (
-            <div className="items" key={item.id}>
-              <div className="item">
-                <h2>Heading {item.creator}</h2>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                  cupidatat non proident, sunt in culpa qui officia deserunt
-                  mollit anim id est laborum Sed ut
-                </p>
-                <Link to={`/singlepost/${item.id}`} className="read">Read More</Link>
+          {isPending ? (
+            <p>Loading Posts...</p>
+          ) : data?.data?.length > 0 ? (
+            data?.data.map((item) => (
+              <div className="items" key={item?._id}>
+                <div className="item">
+                  <h2>{item.title}</h2>
+                  <p>{item.briefDesc}</p>
+                  <div className="main-post">
+                    <Link
+                      to={`/singlepost/${item?._id}?category=${item?.category}`}
+                      className="read"
+                    >
+                      Read More
+                    </Link>
+                    <div className="post-owner">
+                      <div className="post-owner-responsive">
+                        <img
+                          src={globalService.userImg + item.userId?.profileImg}
+                        />
+                      </div>
+                      <div className="">
+                        <h3>{item.userId.name}</h3>
+                        <span className="text-indigo-400">
+                          {format(item.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="item">
+                  <div className="itempost-responsive">
+                    <img
+                      src={globalService.postImg + item.postImg}
+                      alt="homePostImg"
+                      className="responsive"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="item">
-              <div className="itempost-responsive">
-              <img src={item.img} alt="homePostImg" className="responsive" />
+            ))
+          ) : (
+            <p>No posts available.</p>
+          )}
+          {/* <!-- Start Pagination --> */}
+          <nav
+            aria-label="Page navigation example"
+            className="flex justify-center items-center py-20"
+          >
+            <ul className="inline-flex -space-x-px text-sm">
+              <li onClick={() => changePage(1)}>
+                <button className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                  Previous
+                </button>
+              </li>
+              {/* <!-- End previous --> */}
+              {data?.pagination.prev && (
+                <li
+                  onClick={() => changePage(data?.pagination.prev)}
+                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                >
+                  <button className="page-link">{data?.pagination.prev}</button>
+                </li>
+              )}
+              <li className="page-item">
+                <button
+                  disabled
+                  className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                >
+                  {data?.pagination.currentPage}
+                </button>
+              </li>
+              {data?.pagination.next && (
+                <li
+                  onClick={() => changePage(data?.pagination.next)}
+                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                >
+                  <button className="page-link">{data?.pagination.next}</button>
+                </li>
+              )}
+              {/* <!-- Start next --> */}
+              <li onClick={() => changePage(data?.pagination.totalPages)}>
+                <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
 
-              </div>
-              </div>
-            </div>
-          ))}
+          {/* <!-- End Pagination --> */}
         </div>
       </section>
       <Footer />

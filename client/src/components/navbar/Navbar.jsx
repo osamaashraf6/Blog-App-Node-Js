@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import './Navbar.scss';
+import "./Navbar.scss";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../redux/userslice/apiCalls";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown, faUser } from "@fortawesome/free-solid-svg-icons";
 const Navbar = () => {
+  const [open, setOpen] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const handleLogOut = () => {
+    logout(dispatch);
+  };
+  const toggleUserSettings = () => {
+    setOpen((prev) => !prev);
+  };
+
   return (
-    <>
-      <nav className="nav" id="nav">
+    <div className="pb-24">
+      <nav className="nav fixed w-full z-50 bg-white mb-24 shadow-sm py-2" id="nav">
         <div className="container">
           <div className="parnav">
             <div className="brand">
@@ -12,34 +26,116 @@ const Navbar = () => {
             </div>
             <ul>
               <li>
-                <Link to="">ART</Link>
+                <Link to="/filter?category=art">ART</Link>
               </li>
               <li>
-                <Link to="">SCIENCE</Link>
+                <Link to="/filter?category=science">SCIENCE</Link>
               </li>
               <li>
-                <Link to="">TECHNOLOGY</Link>
+                <Link to="/filter?category=technology">TECHNOLOGY</Link>
               </li>
               <li>
-                <Link to="">CINEMA</Link>
+                <Link to="/filter?category=cinema">CINEMA</Link>
               </li>
               <li>
-                <Link to="">DESIGN</Link>
+                <Link to="/filter?category=design">DESIGN</Link>
               </li>
               <li>
-                <Link to="">FOOD</Link>
+                <Link to="/filter?category=food">FOOD</Link>
               </li>
             </ul>
+            {/*  */}
+
+            <div className="flex gap-5 items-center pr-10">
+              <div className="relative">
+                <div>
+                  <button
+                    onClick={toggleUserSettings}
+                    className="pardropdown relative"
+                  >
+                    <FontAwesomeIcon icon={faUser} />
+                    <span className="absolute top-[3px] left-[12px] flex justify-center items-center w-[16px] h-[16px] text-lg rounded-full bg-yellow-500">
+                      <FontAwesomeIcon icon={faAngleDown} />
+                    </span>
+                  </button>
+                </div>
+
+                <div className={open ? "flex" : "hidden"}>
+                  <ul
+                    className="
+                 pardropdown_dropdown absolute top-[34px] left-[-5px] bg-white pt-3 shadow-md rounded w-[200px] border flex-col z-50
+                  "
+                  >
+                    <li>
+                      <Link
+                        onClick={() => setOpen(false)}
+                        to="/profile"
+                        className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
+                      >
+                        <i className="fas fa-user-circle"></i> Profile
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={() => setOpen(false)}
+                        to="/comment"
+                        className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
+                      >
+                        <i className="fas fa-comments"></i> Comments
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={() => setOpen(false)}
+                        to="/like"
+                        className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
+                      >
+                        <i className="fas fa-receipt"></i> Likes
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={() => setOpen(false)}
+                        to="/archive"
+                        className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
+                      >
+                        <i className="fas fa-receipt"></i> Archives
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={() => setOpen(false)}
+                        to="/saved"
+                        className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
+                      >
+                        <i className="fas fa-receipt"></i> Saveds
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {/*  */}
             <div className="user">
-              <span>John</span>
-              <span>Login</span>
-              <span>Logout</span>
-             <Link to="/write">Write</Link>
+              {currentUser ? (
+                <>
+                  <span>{currentUser.data.name}</span>
+                  <span className="logout" onClick={handleLogOut}>
+                    Logout
+                  </span>
+                </>
+              ) : (
+                <Link to="/login">Login</Link>
+              )}
+
+              <Link className="write" to="/write">
+                Write
+              </Link>
             </div>
           </div>
         </div>
       </nav>
-    </>
+    </div>
   );
 };
 

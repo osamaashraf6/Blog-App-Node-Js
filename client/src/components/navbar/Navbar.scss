@@ -34,7 +34,10 @@ nav {
       align-items: center;
       gap: 13px;
 
-      a {
+      .logout {
+        cursor: pointer;
+      }
+      a.write {
         background-color: rgb(110 201 176);
         display: block;
         width: 48px;

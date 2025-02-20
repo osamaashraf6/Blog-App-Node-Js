@@ -3,3 +3,4 @@
 /api/.env
 # Client
 /client/node_modules
+/client/.env
