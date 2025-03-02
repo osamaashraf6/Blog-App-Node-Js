@@ -39,7 +39,11 @@ declare module "express" {
 // 3. Middleware
 app.use(
   cors({
-    origin: ["http://localhost:4200", "http://localhost:3000"],
+    origin: [
+      "http://localhost:4200",
+      "http://localhost:3000",
+      "https://blog-mern-sage.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Content-Type",
