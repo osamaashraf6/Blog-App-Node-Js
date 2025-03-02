@@ -1,6 +1,6 @@
 const globalService = {
   // baseUrl
-  baseUrl: "http://localhost:5000",
+  baseUrl: "https://blog-app-node-js-production.up.railway.app",
   //   Routes
   routes: {
     addresses: "/api/v1/addresses",
@@ -13,8 +13,8 @@ const globalService = {
     users: "/api/v1/users",
   },
   //   domainImgs
-  userImg: "http://localhost:5000/users/",
-  postImg: "http://localhost:5000/posts/",
+  userImg: "https://blog-app-node-js-production.up.railway.app/users/",
+  postImg: "https://blog-app-node-js-production.up.railway.app/posts/",
   //   ApiKey
   APiKey: "secret123",
 };
