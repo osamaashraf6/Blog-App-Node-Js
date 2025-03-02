@@ -42,7 +42,7 @@ app.use(
     origin: [
       "http://localhost:4200",
       "http://localhost:3000",
-      "https://blog-mern-sage.vercel.app",
+      "https://blog-mern-inky.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: [
