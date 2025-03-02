@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import useLikeLogic from "../hooks/shared/likeLogic";
 import LazyLoadingItems from "../components/LazyLoadingItems";
 import LazyLoadingBtn from "../components/LazyLoadingBtn";
+import useCheckToken from "../hooks/shared/checkToken";
 const Like = () => {
   const {
     changePage,
@@ -21,6 +22,8 @@ const Like = () => {
     likes,
     isPending,
   } = useLikeLogic();
+    useCheckToken();
+
   return (
     <>
       <Navbar />

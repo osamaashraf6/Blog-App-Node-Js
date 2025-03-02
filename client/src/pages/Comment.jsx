@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import useCommentLogic from "../hooks/shared/commentLogic";
 import LazyLoadingBtn from "../components/LazyLoadingBtn";
 import LazyLoadingItems from "../components/LazyLoadingItems";
+import useCheckToken from "../hooks/shared/checkToken";
 const Comment = () => {
   const [open, setOpen] = useState(false);
   const [commentBtnId, setCommentBtnId] = useState(null);
@@ -28,6 +29,8 @@ const Comment = () => {
     registerUpdateComment,
     updateComLoading,
   } = useCommentLogic();
+  useCheckToken();
+
   return (
     <>
       <Navbar />
@@ -53,7 +56,7 @@ const Comment = () => {
                 {isPending ? (
                   <tr>
                     <td colSpan="4" className="text-center py-5">
-                     <LazyLoadingItems />
+                      <LazyLoadingItems />
                     </td>
                   </tr>
                 ) : usercomments?.data.length > 0 ? (

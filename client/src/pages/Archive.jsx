@@ -10,6 +10,7 @@ import useArchiveLogic from "../hooks/shared/archiveLogic";
 import LazyLoadingItems from "../components/LazyLoadingItems";
 import LazyLoadingBtn from "../components/LazyLoadingBtn";
 import "../components/home/Homee.scss";
+import checkToken from "../hooks/shared/checkToken";
 
 const Archive = () => {
   const {
@@ -19,6 +20,7 @@ const Archive = () => {
     deleteArchiveLoading,
     archiveId,
   } = useArchiveLogic();
+  checkToken();
   return (
     <>
       <Navbar />

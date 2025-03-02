@@ -16,6 +16,7 @@ import useLikeLogic from "../hooks/shared/likeLogic";
 import useArchiveLogic from "../hooks/shared/archiveLogic";
 import LazyLoadingBtn from "../components/LazyLoadingBtn";
 import LazyLoadingItems from "../components/LazyLoadingItems";
+import useCheckToken from "../hooks/shared/checkToken";
 
 const Saved = () => {
   const { handleLikedBtn, createLikeLoading, likeId } = useLikeLogic();
@@ -23,6 +24,8 @@ const Saved = () => {
     useArchiveLogic();
   const { handleUnsavedBtn, deleteSavLoading, isPending, saveds, savedId } =
     useSavedLogic();
+  useCheckToken();
+
   return (
     <>
       <Navbar />

@@ -2,7 +2,10 @@ import React from "react";
 import AsideLeft from "../components/asideleft/AsideLeft";
 import AsideCenter from "../components/asidecenter/AsideCenter";
 import Navbar from "../components/navbar/Navbar";
+import useCheckToken from "../hooks/shared/checkToken";
 const Profile = () => {
+  useCheckToken();
+
   return (
     <>
       <Navbar />
@@ -18,7 +21,6 @@ const Profile = () => {
           </div>
         </section>
       </main>
-     
     </>
   );
 };
