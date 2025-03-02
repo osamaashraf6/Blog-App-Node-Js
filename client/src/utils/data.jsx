@@ -7,7 +7,7 @@ export const posts = [
     price: "300$",
   },
   {
-    id: 2,
+    id: "67a4f1f3692965f39365a5be",
     img: "https://media2.orlandoweekly.com/orlando/imager/20-orlando-hotels-and-resorts-offering-pool-day-passes-for-locals/u/zoom/32039230/alof.png?cb=1657981795",
     creator: "Ahmedd",
     place: "post2",
@@ -54,5 +54,32 @@ export const posts = [
     creator: "Dawoud",
     place: "post8",
     price: "350$",
+  },
+];
+
+export const radioInputs = [
+  {
+    id: 1,
+    label: "art",
+  },
+  {
+    id: 2,
+    label: "science",
+  },
+  {
+    id: 3,
+    label: "technology",
+  },
+  {
+    id: 4,
+    label: "cinema",
+  },
+  {
+    id: 5,
+    label: "design",
+  },
+  {
+    id: 6,
+    label: "food",
   },
 ];

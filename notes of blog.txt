@@ -1,0 +1,105 @@
+  const [quillValue, setQuillValue] = useState("");
+  const [quillValidate, setQuillValidate] = useState(false);
+  // const [draftForm, setDraftForm] = useState([]);
+  // const [drafted, setDrafted] = useState(false);
+  const location = useLocation();
+  console.log(location.state);
+  const { createOnePostMutation, updateOnePostMutation } = usePost();
+  const { error, isPending, data } = createOnePostMutation;
+  const { currentUser } = useSelector((state) => state.user);
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const handleSubmitMethod = (data) => {
+    if (!currentUser) {
+      toast.error("Sign in first ! Save as draft for the next time");
+    } else {
+      // if (location?.state?.updated) {
+      //   console.log(" updated");
+      //   // Create FormData to send as multipart/form-data
+      //   const formData = new FormData();
+      //   formData.append("title", data.title);
+      //   formData.append("briefDesc", data.briefDesc);
+      //   formData.append("detailedDesc", quillValue);
+      //   formData.append("category", data.category);
+      //   if (data.postImg && data.postImg[0]) {
+      //     formData.append("postImg", data.postImg[0]);
+      //   }
+      //   updateOnePostMutation.mutate(
+      //     { id: location?.state?.updatedPost?._id, dataForm: formData },
+      //     {
+      //       onSuccess: () => {
+      //         toast.success("Post Has Been Updated Successfully !");
+      //       },
+      //       onError: (res) => {
+      //         toast.error(
+      //           `${res?.response?.data?.error?.message}, Sign in Please !`
+      //         );
+      //       },
+      //     }
+      //   );
+      //   reset();
+      //   setQuillValue("");
+      // } else {
+      //   console.log(" posted  ");
+
+      if (quillValue === "") {
+        // ! it is not work not change the quillvalidate value, so the error not appeared
+        setQuillValidate(true);
+      }
+
+      // Create FormData to send as multipart/form-data
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("briefDesc", data.briefDesc);
+      formData.append("detailedDesc", quillValue);
+      formData.append("category", data.category);
+      if (data.postImg && data.postImg[0]) {
+        formData.append("postImg", data.postImg[0]);
+      }
+      createOnePostMutation.mutate(formData, {
+        onSuccess: () => {
+          toast.success("Post Has Been Created Successfully !");
+        },
+        onError: (res) => {
+          toast.error(
+            `${res?.response?.data?.error?.message}, Sign in Please !`
+          );
+        },
+      });
+      reset();
+      setQuillValue("");
+    }
+    // }
+  };
+  // const handleSaveAsDraft = () => {
+  //   if (
+  //     !getValues("title") &&
+  //     !getValues("briefDesc") &&
+  //     !quillValue &&
+  //     !getValues("category")
+  //   ) {
+  //     toast.error("Write some thing at any input to save it as draft !");
+  //   } else {
+  //     localStorage.setItem(
+  //       "postDraft",
+  //       JSON.stringify({
+  //         title: getValues("title"),
+  //         briefDesc: getValues("briefDesc"),
+  //         quillValue,
+  //         category: getValues("category"),
+  //       })
+  //     );
+  //     setDrafted(true);
+  //     toast.success("Draft saved!");
+  //   }
+  // };
+  // useEffect(() => {
+  //   const parsedDraftForm = JSON.parse(localStorage.getItem("postDraft"));
+  //   setDraftForm(parsedDraftForm);
+  // }, []);

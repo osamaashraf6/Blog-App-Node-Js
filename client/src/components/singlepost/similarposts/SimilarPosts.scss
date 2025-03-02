@@ -16,11 +16,13 @@
 
 a.read {
   display: block;
-  width: 103px;
-  padding: 11px;
+  width: 90px;
+  text-align: center;
+  padding: 9px;
   border: 1px solid rgb(35, 151, 106);
   border-radius: 3px;
   background-color: #fff;
   color: rgb(35, 151, 106);
   cursor: pointer;
+  font-size: 12px;
 }

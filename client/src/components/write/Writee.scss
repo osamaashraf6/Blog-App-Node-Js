@@ -33,9 +33,8 @@ section.write {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          button:nth-child(1) {
+          span {
             display: block;
-            width: 113px;
             padding: 6px;
             border: 1px solid rgb(110 201 176);
             border-radius: 3px;
@@ -43,7 +42,7 @@ section.write {
             color: rgb(110 201 176);
             cursor: pointer;
           }
-          button:nth-child(2) {
+          button {
             display: block;
             width: 72px;
             padding: 6px;
