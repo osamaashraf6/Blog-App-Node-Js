@@ -11,7 +11,7 @@ const useUser = () => {
   const queryClient = useQueryClient();
 
   // !  getOne
-  const getUserProfileByHimSelfQuery = () => {
+  const useGetUserProfileByHimSelfQuery = () => {
     return useQuery({
       queryKey: ["user"],
       queryFn: getUserProfileByHimSelf,
@@ -40,7 +40,7 @@ const useUser = () => {
   });
 
   return {
-    getUserProfileByHimSelfQuery,
+    useGetUserProfileByHimSelfQuery,
     updateUserProfileByUserHimSelfMutation,
     changeUserPasswordByUserHimSelfMutation,
     deleteUserAccountByUserHimSelfMutation,

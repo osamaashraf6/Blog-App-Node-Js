@@ -32,10 +32,10 @@ export const getOnePost = async (id) => {
   return res.data;
 };
 // updateOnePost
-export const updateOnePost = async (id, dataForm) => {
+export const updateOnePost = async ({ id, formData }) => {
   const res = await apiClient.put(
     `${globalService.routes.posts}/${id}`,
-    dataForm
+    formData
   );
   return res.data;
 };

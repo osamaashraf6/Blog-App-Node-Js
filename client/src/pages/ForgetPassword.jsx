@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import useAuth from "../hooks/authHook";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import LazyLoadingBtn from "../components/LazyLoadingBtn";
 const ForgetPassword = () => {
   const { forgetPasswordMutation } = useAuth();
   const { error, isPending, data } = forgetPasswordMutation;
@@ -32,25 +33,42 @@ const ForgetPassword = () => {
     // }
   };
   return (
-    <form onSubmit={handleSubmit(handleSubmitMethod)}>
-      <input
-        type="email"
-        placeholder="enter your email"
-        name="email"
-        {...register("email", { required: "Email is required" })}
-      />
-      {errors.email && <p>{errors.email.message}</p>}
-      <button type="submit" disabled={isPending}>
-        {isPending ? "Please wait..." : "Send"}
-      </button>
-
-      {/* Show error message */}
-      {error && (
-        <p style={{ color: "red" }}>
-          {error?.response?.data?.message || "Something went wrong!"}
-        </p>
-      )}
-    </form>
+    <>
+      <section className="parent  h-screen py-24 grid place-items-center">
+        <div className="wrapper w-[571px] rounded-lg">
+          <div className="bg-white p-4 border">
+            <h3 className="uppercase text-xl pb-4">Forget Passwod</h3>
+            <form
+              onSubmit={handleSubmit(handleSubmitMethod)}
+              className="flex flex-col gap-4 pb-4"
+            >
+              <div className="">
+                <input
+                  type="email"
+                  className="p-2 border w-full"
+                  placeholder="email"
+                  name="email"
+                  {...register("email", { required: "Email is required" })}
+                />
+              </div>
+              {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+              <button
+                disabled={isPending}
+                className="uppercase bg-emerald-500 text-white p-2 px-10 text-sm w-fit"
+                type="submit"
+              >
+                {isPending ? <LazyLoadingBtn /> : "Send"}
+              </button>
+            </form>
+            {error && (
+              <p style={{ color: "red" }}>
+                {error?.response?.data?.message || "Something went wrong!"}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

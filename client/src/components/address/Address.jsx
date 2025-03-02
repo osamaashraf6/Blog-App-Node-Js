@@ -1,55 +1,21 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import useAddress from "../../hooks/addressesHook";
+
+import LazyLoadingBtn from "../LazyLoadingBtn";
+import LazyLoadingItems from "../LazyLoadingItems";
+import useAddressLogic from "../../hooks/shared/addressLogic";
 const Address = () => {
   const [openCreateAddress, setOpenCreateAddress] = useState(false);
   const {
-    createOneAddressMutation,
-    getAllAddressOfUserQuery,
-    deleteOneAddressMutation,
-  } = useAddress();
-  const { isPending: addressLoading, data: addresses } =
-    getAllAddressOfUserQuery;
-  const { isPending: createAddLoading } = createOneAddressMutation;
-
-  const { isPending: deleteAddLoading } = deleteOneAddressMutation;
-  const { currentUser } = useSelector((state) => state.user);
-  const {
-    register: registerAddress,
-    handleSubmit: handleSubmitAddress,
-    reset: resetAddress,
-    formState: { errors: errorsAddress },
-  } = useForm();
-
-  const handleDeleteAddress = (addressId) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      deleteOneAddressMutation.mutate(addressId, {
-        onSuccess: (res) => {
-          toast.success("Address Has Been Deleted Successfully");
-        },
-        onError: (res) => {},
-      });
-    }
-  };
-  const handleCreateAddress = (data) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      createOneAddressMutation.mutate(data, {
-        onSuccess: () => {
-          toast.success("Address Has Been Created Successfully");
-        },
-        onError: (res) => {},
-      });
-      resetAddress();
-    }
-  };
-  //
-
+    handleCreateAddress,
+    handleDeleteAddress,
+    errorsAddress,
+    handleSubmitAddress,
+    registerAddress,
+    deleteAddLoading,
+    createAddLoading,
+    addressLoading,
+    addresses,
+  } = useAddressLogic();
   return (
     <>
       {/* <!-- address --> */}
@@ -58,7 +24,7 @@ const Address = () => {
         <div className="">
           <ul className="text-slate-400 font-medium text-sm flex flex-col gap-3">
             {addressLoading ? (
-              <p>Address Loading...</p>
+              <LazyLoadingItems />
             ) : addresses?.data?.length > 0 ? (
               addresses?.data?.map((item) => (
                 <div
@@ -85,7 +51,7 @@ const Address = () => {
                       className="border border-red-600 px-2 py-1 rounded text-red-500 text-sm"
                       disabled={deleteAddLoading}
                     >
-                      {deleteAddLoading ? "Please wait.." : "Remove"}
+                      {deleteAddLoading ? <LazyLoadingBtn /> : "Remove"}
                     </button>
                   </div>
                 </div>
@@ -112,7 +78,7 @@ const Address = () => {
              parmodal top-0 left-0 w-full h-full justify-center pt-[82px] bg-[#000000cc] z-50 fixed
           `}
       >
-        <div className="parmodal_modal  bg-white w-[350px] h-[600px] pr-4 pl-10 pt-2 pb-8">
+        <div className="parmodal_modal  bg-white w-[350px] h-[580px] pr-4 pl-10 pt-2 pb-8">
           <div className="flex justify-end">
             <button
               onClick={() => setOpenCreateAddress(false)}
@@ -194,10 +160,10 @@ const Address = () => {
             )}
             <button
               type="submit"
-              className="p-1 bg-yellow-500 text-white text-sm"
+              className="p-1 bg-emerald-500 text-white text-sm"
               disabled={createAddLoading}
             >
-              {createAddLoading ? "Please wait..." : "Create"}
+              {createAddLoading ? <LazyLoadingBtn  /> : "Create"}
               Create
             </button>
           </form>

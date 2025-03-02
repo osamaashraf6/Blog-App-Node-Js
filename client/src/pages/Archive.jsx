@@ -1,80 +1,48 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import useArchive from "../hooks/archivesHook";
-import { useSelector } from "react-redux";
-import useSaved from "../hooks/savedsHook";
 import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/footer/Footer";
 import globalService from "../services/globalService";
 import { format } from "timeago.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
+import useArchiveLogic from "../hooks/shared/archiveLogic";
+import LazyLoadingItems from "../components/LazyLoadingItems";
+import LazyLoadingBtn from "../components/LazyLoadingBtn";
+import "../components/home/Homee.scss";
 
 const Archive = () => {
-  const { currentUser } = useSelector((state) => state.user);
-  const { createOneSavedMutation } = useSaved();
-  const { getAllArchiveQuery, deleteOneArchiveMutation } = useArchive();
-  const { isPending, data: archives } = getAllArchiveQuery;
-  const { isPending: archiveLoading } = deleteOneArchiveMutation;
-  const handleSavedBtn = (id) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      createOneSavedMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Post Has Been Saved successfully !");
-        },
-        onError: (res) => {
-          console.log(res);
-          toast.error(res?.response?.data?.errors[0]?.msg);
-        },
-      });
-    }
-  };
-  const handleUnArchivedBtn = (id, postId) => {
-    if (!currentUser) {
-      toast.error("Sign in First");
-    } else {
-      handleSavedBtn(postId);
-      deleteOneArchiveMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Post Has Been Unarchived Successfully");
-        },
-        onError: (res) => {
-          console.log(res);
-          toast.error(
-            res?.response?.data?.message +
-              ", " +
-              "saession terminated, sign in again"
-          );
-        },
-      });
-    }
-  };
+  const {
+    archives,
+    isPending,
+    handleUnArchivedBtn,
+    deleteArchiveLoading,
+    archiveId,
+  } = useArchiveLogic();
   return (
     <>
       <Navbar />
       <section className="home-page" id="home-page">
         <div className="container">
           {isPending ? (
-            <p>Loading Saveds...</p>
+            <LazyLoadingItems />
           ) : archives?.data?.length > 0 ? (
             archives?.data.map((item) => (
-              <div className="items" key={item?.postId?._id}>
+              <div className="items" key={item?._id}>
                 <div className="item">
                   <h2>{item?.postId?.title}</h2>
                   <p>{item?.postId?.briefDesc}</p>
                   <div className="main-post">
                     <Link
                       to={`/singlepost/${item?.postId?._id}?category=${item?.postId?.category}`}
-                      className="read"
+                      className="read border border-emerald-300 px-4  text-xs rounded flex justify-center items-center"
                     >
                       Read More
                     </Link>
                     <div className="post-owner">
                       <div className="post-owner-responsive">
                         <img
+                          className="border-emerald-200 border-2"
                           src={
                             globalService.userImg +
                             item?.postId?.userId?.profileImg
@@ -82,7 +50,7 @@ const Archive = () => {
                         />
                       </div>
                       <div className="">
-                        <h3>{item.userId.name}</h3>
+                        <h3>{item?.postId?.userId?.name}</h3>
                         <span className="text-indigo-400">
                           {format(item.createdAt)}
                         </span>
@@ -92,13 +60,13 @@ const Archive = () => {
                   <div className="flex gap-2 pt-10">
                     <button
                       className="border border-red-600 text-red-500 px-4 py-2"
-                      disabled={archiveLoading}
+                      disabled={item?._id === archiveId && deleteArchiveLoading}
                       onClick={() =>
                         handleUnArchivedBtn(item?._id, item?.postId?._id)
                       }
                     >
-                      {archiveLoading ? (
-                        "please wait..."
+                      {item?._id === archiveId && deleteArchiveLoading ? (
+                        <LazyLoadingBtn />
                       ) : (
                         <>
                           Unarchive <FontAwesomeIcon icon={faBookmark} />

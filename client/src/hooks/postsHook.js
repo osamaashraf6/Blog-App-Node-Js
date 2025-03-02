@@ -20,7 +20,7 @@ const usePost = () => {
   });
 
   // ! getAll with filter
-  const getAllPostQuery = ({ limit, page, sort, search, category, tags }) => {
+  const useGetAllPostQuery = ({ limit, page, sort, search, category, tags }) => {
     return useQuery({
       queryKey: ["posts", limit, page, sort, search, category, tags],
       queryFn: () => getAllPost(limit, page, sort, search, category, tags),
@@ -35,7 +35,7 @@ const usePost = () => {
   // });
 
   // !  getOne
-  const getOnePostQuery = (id) => {
+  const useGetOnePostQuery = (id) => {
     return useQuery({
       queryKey: ["post", id],
       queryFn: () => getOnePost(id),
@@ -59,8 +59,8 @@ const usePost = () => {
 
   return {
     createOnePostMutation,
-    getAllPostQuery,
-    getOnePostQuery,
+    useGetAllPostQuery,
+    useGetOnePostQuery,
     updateOnePostMutation,
     deleteOnePostMutation,
   };

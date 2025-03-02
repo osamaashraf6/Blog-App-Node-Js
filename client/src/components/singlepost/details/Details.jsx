@@ -1,61 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import "./Details.scss";
-import usePost from "../../../hooks/postsHook";
-import useSaved from "../../../hooks/savedsHook";
-import useComment from "../../../hooks/commentsHook";
 import globalService from "../../../services/globalService";
 import { format } from "timeago.js";
-import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useForm } from "react-hook-form";
 import {
   faBookmark,
   faComment,
   faThumbsUp,
 } from "@fortawesome/free-solid-svg-icons";
-import useLike from "../../../hooks/likesHook";
+import useSavedLogic from "../../../hooks/shared/savedLogic";
+import useLikeLogic from "../../../hooks/shared/likeLogic";
+import useCommentLogic from "../../../hooks/shared/commentLogic";
+import usePostLogic from "../../../hooks/shared/postLogic";
+import { useSelector } from "react-redux";
+import LazyLoadingBtn from "../../LazyLoadingBtn";
+import LazyLoadingItems from "../../LazyLoadingItems";
 
 const Details = () => {
-  const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [commentBtnId, setCommentBtnId] = useState(null);
   const [detailedDesc, setDetailedDesc] = useState("");
   const [updatedPost, setUpdatedPost] = useState([]);
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { getOnePostQuery, deleteOnePostMutation } = usePost();
-  const { createOneSavedMutation, deleteOneSavedMutation } = useSaved();
-  const {
-    createOneCommentMutation,
-    getAllCommentOfPostQuery,
-    updateOneCommentMutation,
-    deleteOneCommentMutation,
-  } = useComment();
-  const { createOneLikeMutation } = useLike();
-  const { isPending, data: post } = getOnePostQuery(id);
-  const { error, isPending: isLoading, data } = deleteOnePostMutation;
-  //
-  const { isPending: createComLoading } = createOneCommentMutation;
-  const { isPending: commentLoading, data: comments } =
-    getAllCommentOfPostQuery({
-      postId: post?.data?._id,
-      limit: 5,
-      page,
-      sort: "-createdAt",
-    });
-  const { isPending: updateComLoading } = updateOneCommentMutation;
-  const { isPending: deleteComLoading } = deleteOneCommentMutation;
-  //
   const { currentUser } = useSelector((state) => state.user);
-  const changePage = (page) => {
-    setPage(page);
-  };
+  const navigate = useNavigate();
+  const { post, isPending, handleDeleteOnePost, deletePostLoading } =
+    usePostLogic();
+  const { handleSavedBtn, createSavLoading } = useSavedLogic();
+  const { handleLikedBtn, createLikeLoading } = useLikeLogic();
   const {
+    changePage,
+    handleDeleteComment,
+    deleteComLoading,
+    commentId,
     register,
     handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+    errors,
+    handleCreateOneComment,
+    createComLoading,
+    comments,
+    commentLoading,
+    //
+    handleUpdateOneComment,
+    errorsUpdateComment,
+    handleSubmitUpdateComment,
+    registerUpdateComment,
+    updateComLoading,
+  } = useCommentLogic();
   useEffect(() => {
     // ! imporatnt as not appear if you don't write condition as it is asyncho
     if (post?.data?.detailedDesc) {
@@ -65,121 +56,17 @@ const Details = () => {
       setUpdatedPost(post?.data);
     }
   }, [post]);
-  const handleDeleteOnePost = (id) => {
-    if (!currentUser) {
-      toast.error("You have to sign in first !");
-    } else {
-      deleteOnePostMutation.mutate(
-        id,
-
-        {
-          onSuccess: (res) => {
-            toast.success(res);
-            navigate("/home");
-          },
-          onError: (res) => {
-            toast.error(
-              `${res?.response?.data?.error?.message}, Sign in again`
-            );
-          },
-        }
-      );
-    }
-  };
   const handleNavigation = () => {
     navigate("/write", { state: { updatedPost, updated: true } });
   };
-  // const handleSavedBtn = (saved) => {
-  //   if (!currentUser) {
-  //     toast.error("Please sign in first !");
-  //   } else {
-  //     if (saved) {
-  //       console.log(saved)
-  //       // ! send here the id of that like
-  //       const likeId = post?.data?.saveds?.map((item) => {
-  //         if (item?.userId === currentUser?._id) {
-  //           return item?._id;
-  //         }
-  //       });
-  //       deleteOneSavedMutation.mutate(likeId, {
-  //         onSuccess: () => {
-  //           toast.success("Post Has Been Unsaved successfully !");
-  //         },
-  //       });
-  //     } else {
-  //       // ! send here the id of that post
-  //       createOneSavedMutation.mutate(post?.data?._id, {
-  //         onSuccess: () => {
-  //           toast.success("Post Has Been Saved successfully !");
-  //         },
-  //       });
-  //     }
-  //   }
-  // };
-  const handleSavedBtn = (id) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      createOneSavedMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Post Has Been Saved successfully !");
-        },
-        onError: (res) => {
-          toast.error(res?.response?.data?.errors[0]?.msg);
-        },
-      });
-    }
-  };
-  const handleLikedBtn = (id) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      createOneLikeMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Post Has Been Liked successfully !");
-        },
-        onError: (res) => {
-          toast.error(res?.response?.data?.errors[0]?.msg);
-        },
-      });
-    }
-  };
-  const handleCreateOneComment = (postId, data) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      createOneCommentMutation.mutate(
-        { postId, formData: data },
-        {
-          onSuccess: () => {
-            toast.success("Comment Has Been Added Successfully");
-          },
-          onError: () => {
-            toast.error("Something went wrong !");
-          },
-        }
-      );
-      reset();
-    }
-  };
-  const handleDeleteOneComment = (id) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      deleteOneCommentMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Comment Has Been Deleted Successfully");
-        },
-        onError: () => {},
-      });
-    }
-  };
+
   return (
     <>
       {isPending ? (
-        <p>Loading....</p>
+        // <p>Loading....</p>
+        <LazyLoadingItems />
       ) : post?.data ? (
-        <div className="pt-8 flex flex-col gap-8">
+        <div className="pt-8 flex flex-col gap-8 pr-8">
           <div className="single-responsive pb-6">
             <img
               src={globalService.postImg + post?.data.postImg}
@@ -204,54 +91,34 @@ const Details = () => {
             {/*  */}
             {post?.data?.userId?._id === currentUser?.data?._id && (
               <div className="flex gap-4">
-                <button
+                {/* <button
                   onClick={handleNavigation}
                   className="text-green-600 font-medium"
                 >
                   Edit
-                </button>
+                </button> */}
                 <button
                   onClick={() => handleDeleteOnePost(post?.data?._id)}
                   className="text-red-500 font-medium"
-                  disabled={isLoading}
+                  disabled={deletePostLoading}
                 >
-                  {isLoading ? "Loading" : "Delete"}
+                  {deletePostLoading ? "Loading" : "Delete"}
                 </button>
               </div>
             )}
           </div>
           <div className="flex items-end w-full flex-col gap-3">
-            {/* // ! send the model.userId */}
-            {/* <button
-              className="w-fit"
-              onClick={() =>
-                handleSavedBtn(
-                  post?.data?.saveds?.some(
-                    (item) => item?.userId === currentUser?._id
-                  )
-                )
-              }
-            >
-              {post?.data?.saveds?.some(
-                (item) => item?.userId == currentUser?._id
-              ) ? (
-                <FontAwesomeIcon
-                  icon={faBookmark}
-                  className="text-emerald-500 "
-                />
-              ) : (
-                <FontAwesomeIcon icon={faBookmark} />
-              )}
-            </button> */}
             <button
               onClick={() => handleSavedBtn(post?.data?._id)}
               className="text-emerald-400"
+              disabled={createSavLoading}
             >
               <FontAwesomeIcon icon={faBookmark} />
             </button>
             <button
               onClick={() => handleLikedBtn(post?.data?._id)}
               className="w-fit"
+              disabled={createLikeLoading}
             >
               <FontAwesomeIcon icon={faThumbsUp} />
             </button>
@@ -302,10 +169,10 @@ const Details = () => {
 
               <button
                 type="submit"
-                className=" bg-blue-600 text-white font-medium px-4 py-2 rounded w-[200px]"
+                className=" bg-blue-600 text-white font-medium  py-2 rounded w-[200px] text-xs"
                 disabled={createComLoading}
               >
-                {createComLoading ? "Please wait.." : " Add comment"}
+                {createComLoading ? <LazyLoadingBtn /> : " Add comment"}
               </button>
             </div>
           </form>
@@ -315,7 +182,7 @@ const Details = () => {
           {/*  */}
           <div className="fetch-comments p-4">
             {commentLoading ? (
-              <p>Comments Loading...</p>
+              <LazyLoadingItems />
             ) : comments?.data?.length > 0 ? (
               comments?.data?.map((item) => (
                 <div
@@ -339,15 +206,30 @@ const Details = () => {
                     </div>
                     {item?.userId?._id === currentUser?.data?._id && (
                       <div className="flex flex-col gap-4">
-                        <button className="border border-emerald-600 text-emerald-500 px-4 py-2">
-                          Edit
+                        <button
+                          onClick={() => {
+                            setOpen(true);
+                            setCommentBtnId(item?._id);
+                          }}
+                          className="rounded text-xs border border-emerald-600 text-emerald-500 px-4 py-2"
+                          disabled={item?._id === commentId && updateComLoading}
+                        >
+                          {item?._id === commentId && updateComLoading ? (
+                            <LazyLoadingBtn />
+                          ) : (
+                            "update"
+                          )}
                         </button>
                         <button
-                          onClick={() => handleDeleteOneComment(item?._id)}
-                          className="border border-red-600 text-red-500 px-4 py-2"
-                          disabled={deleteComLoading}
+                          onClick={() => handleDeleteComment(item?._id)}
+                          className="rounded text-xs border border-red-600 text-red-500 px-4 py-2"
+                          disabled={item?._id === commentId && deleteComLoading}
                         >
-                          {deleteComLoading ? "please wait..." : " Delete"}
+                          {item?._id === commentId && deleteComLoading ? (
+                            <LazyLoadingBtn />
+                          ) : (
+                            " Delete"
+                          )}
                         </button>
                       </div>
                     )}
@@ -418,6 +300,51 @@ const Details = () => {
           </div>
         </div>
       </section>
+      {/* <!-- Modal comment update --> */}
+      <div
+        className={`
+        ${open ? "flex" : "hidden"}
+         parmodal top-0 left-0 w-full h-full justify-center pt-[82px] bg-[#000000cc] z-50 fixed
+      `}
+      >
+        <div className="parmodal_modal  bg-white w-[350px] h-[230px] pr-4 pl-10 pt-2 pb-8">
+          <div className="flex justify-end">
+            <button
+              onClick={() => setOpen(false)}
+              className="p-1 text-white bg-red-500 text-xs"
+            >
+              close
+            </button>
+          </div>
+          <h2 className="text-2xl text-gray-300 font-bold pb-6">
+            Upade Post Comment
+          </h2>
+          <form
+            onSubmit={handleSubmitUpdateComment((data) =>
+              handleUpdateOneComment(commentBtnId, data)
+            )}
+            className="flex flex-col gap-4 pr-6"
+          >
+            <div className="flex flex-col">
+              <label className="text-gray-400 pb-4 text-xs font-medium">
+                Comment
+              </label>
+              <input
+                type="text"
+                className="text-sm w-full border-0 border-b"
+                {...registerUpdateComment("comment")}
+              />
+            </div>
+
+            <button
+              className="p-1 bg-emerald-500 text-white text-sm"
+              disabled={updateComLoading}
+            >
+              {updateComLoading ? <LazyLoadingBtn /> : "Update"}
+            </button>
+          </form>
+        </div>
+      </div>
     </>
   );
 };

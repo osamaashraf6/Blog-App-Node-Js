@@ -6,11 +6,12 @@ import "./Homee.scss";
 import usePost from "../../hooks/postsHook";
 import globalService from "../../services/globalService";
 import { format } from "timeago.js";
+import LazyLoadingItems from "../LazyLoadingItems";
 
 const Homee = () => {
   const [page, setPage] = useState(1);
-  const { getAllPostQuery } = usePost();
-  const { isPending, data } = getAllPostQuery({
+  const { useGetAllPostQuery } = usePost();
+  const { isPending, data } = useGetAllPostQuery({
     limit: 2,
     page,
     sort: "title",
@@ -24,23 +25,24 @@ const Homee = () => {
       <section className="home-page" id="home-page">
         <div className="container">
           {isPending ? (
-            <p>Loading Posts...</p>
+            <LazyLoadingItems />
           ) : data?.data?.length > 0 ? (
             data?.data.map((item) => (
-              <div className="items" key={item?._id}>
+              <div className="items " key={item?._id}>
                 <div className="item">
                   <h2>{item.title}</h2>
                   <p>{item.briefDesc}</p>
                   <div className="main-post">
                     <Link
                       to={`/singlepost/${item?._id}?category=${item?.category}`}
-                      className="read"
+                      className="border border-emerald-300 rounded text-xs px-4 flex justify-center items-center"
                     >
                       Read More
                     </Link>
                     <div className="post-owner">
                       <div className="post-owner-responsive">
                         <img
+                          className="border-emerald-200 border-2"
                           src={globalService.userImg + item.userId?.profileImg}
                         />
                       </div>
@@ -54,7 +56,7 @@ const Homee = () => {
                   </div>
                 </div>
                 <div className="item">
-                  <div className="itempost-responsive">
+                  <div className="itempost-responsive h-[350px]">
                     <img
                       src={globalService.postImg + item.postImg}
                       alt="homePostImg"

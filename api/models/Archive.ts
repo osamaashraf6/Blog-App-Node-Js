@@ -11,7 +11,7 @@ const ArchiveSchema = new mongoose.Schema<IArchive>(
 );
 // 3. (pre&post, statics, virtuals) CRUD
 ArchiveSchema.pre<IArchive>(/^find/, async function (next) {
-  this.populate({ path: "postId", select: "title postImg" });
+  this.populate({ path: "postId", select: "title postImg category" });
   next();
 });
 export default mongoose.model<IArchive>("ArchiveModel", ArchiveSchema);

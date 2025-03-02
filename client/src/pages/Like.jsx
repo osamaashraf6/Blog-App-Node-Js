@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/footer/Footer";
-import useLike from "../hooks/likesHook";
-import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faX } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -11,38 +9,18 @@ import {
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import useLikeLogic from "../hooks/shared/likeLogic";
+import LazyLoadingItems from "../components/LazyLoadingItems";
+import LazyLoadingBtn from "../components/LazyLoadingBtn";
 const Like = () => {
-  const [page, setPage] = useState(1);
   const {
-    getAllLikeOfUserQuery,
-    deleteOneLikeMutation,
-  } = useLike();
-  //
-  const { isPending, data: likes } = getAllLikeOfUserQuery({
-    limit: 5,
-    page,
-    sort: "-createdAt",
-  });
-  console.log(likes);
-  const { isPending: deleteLikLoading } = deleteOneLikeMutation;
-  //
-  const { currentUser } = useSelector((state) => state.user);
-  const changePage = (page) => {
-    setPage(page);
-  };
-  const handleDeleteLike = (id) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      deleteOneLikeMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Like deleted successfully");
-        },
-        onError: () => {},
-      });
-    }
-  };
+    changePage,
+    likeId,
+    handleDeleteLike,
+    deleteLikLoading,
+    likes,
+    isPending,
+  } = useLikeLogic();
   return (
     <>
       <Navbar />
@@ -67,7 +45,7 @@ const Like = () => {
                 {isPending ? (
                   <tr>
                     <td colSpan="4" className="text-center py-5">
-                      Likes Loading...
+                      <LazyLoadingItems />
                     </td>
                   </tr>
                 ) : likes?.data.length > 0 ? (
@@ -88,9 +66,11 @@ const Like = () => {
                         <button
                           onClick={() => handleDeleteLike(item?._id)}
                           className="border border-red-500 p-2 px-3 text-xs rounded text-red-500"
-                          disabled={deleteLikLoading}
+                          disabled={item?._id === likeId && deleteLikLoading}
                         >
-                          {deleteLikLoading ? "Please wait" : " Dislike"}
+                          {item?._id === likeId && deleteLikLoading
+                            ? <LazyLoadingBtn />
+                            : " Dislike"}
                         </button>
                       </td>
                     </tr>

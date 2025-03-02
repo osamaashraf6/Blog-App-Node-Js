@@ -21,7 +21,7 @@ const useLike = () => {
   // });
   // ! getAllLikeOfUser with filter
 
-  const getAllLikeOfUserQuery = ({
+  const useGetAllLikeOfUserQuery = ({
     limit,
     page,
     sort,
@@ -47,7 +47,7 @@ const useLike = () => {
   return {
     createOneLikeMutation,
     // getAllLikeQuery,
-    getAllLikeOfUserQuery,
+    useGetAllLikeOfUserQuery,
     deleteOneLikeMutation,
   };
 };

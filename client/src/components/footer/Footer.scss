@@ -1,20 +1,10 @@
 footer {
-  .parfoot{
+  .parfoot {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color:rgb(167, 237, 217); 
+    background-color: rgb(167, 237, 217);
     height: 74px;
     padding: 10px;
-    .brand{
-        a{
-            font-size: 30px;
-            background-color: aliceblue;
-            width: 40px;
-            padding: 14px;
-            border-radius: 50%;
-            border: 1px solid;
-        }
-    }
   }
 }

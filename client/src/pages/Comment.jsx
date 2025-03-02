@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/footer/Footer";
-import useComment from "../hooks/commentsHook";
-import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faX } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -11,40 +9,25 @@ import {
   faLinkedin,
 } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import useCommentLogic from "../hooks/shared/commentLogic";
+import LazyLoadingBtn from "../components/LazyLoadingBtn";
+import LazyLoadingItems from "../components/LazyLoadingItems";
 const Comment = () => {
-  const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
+  const [commentBtnId, setCommentBtnId] = useState(null);
   const {
-    getAllCommentOfUserQuery,
-    updateOneCommentMutation,
-    deleteOneCommentMutation,
-  } = useComment();
-  //
-  const { isPending, data: comments } = getAllCommentOfUserQuery({
-    limit: 5,
-    page,
-    sort: "-createdAt",
-  });
-  const { isPending: updateComLoading } = updateOneCommentMutation;
-  const { isPending: deleteComLoading } = deleteOneCommentMutation;
-  //
-  const { currentUser } = useSelector((state) => state.user);
-  const changePage = (page) => {
-    setPage(page);
-  };
-  const handleDeleteComment = (id) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      deleteOneCommentMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Comment deleted successfully");
-        },
-        onError: () => {},
-      });
-    }
-  };
+    isPending,
+    usercomments,
+    changePage,
+    handleDeleteComment,
+    deleteComLoading,
+    commentId,
+    handleUpdateOneComment,
+    errorsUpdateComment,
+    handleSubmitUpdateComment,
+    registerUpdateComment,
+    updateComLoading,
+  } = useCommentLogic();
   return (
     <>
       <Navbar />
@@ -70,11 +53,11 @@ const Comment = () => {
                 {isPending ? (
                   <tr>
                     <td colSpan="4" className="text-center py-5">
-                      Comments Loading...
+                     <LazyLoadingItems />
                     </td>
                   </tr>
-                ) : comments?.data.length > 0 ? (
-                  comments?.data?.map((item) => (
+                ) : usercomments?.data.length > 0 ? (
+                  usercomments?.data?.map((item) => (
                     // !
                     <tr key={item?._id} className="border-b border-gray-200">
                       <td className="capitalize text-center"># {item?._id}</td>
@@ -90,17 +73,24 @@ const Comment = () => {
                       <td className="text-center">{item?.comment}</td>
                       <td className="flex flex-col gap-2 justify-center items-center py-5">
                         <button
-                          onClick={() => setOpen(true)}
+                          onClick={() => {
+                            setOpen(true);
+                            setCommentBtnId(item?._id);
+                          }}
                           className="border border-emerald-500 p-2 text-xs rounded text-emerald-500"
                         >
-                          Update Comment
+                          Update
                         </button>
                         <button
                           onClick={() => handleDeleteComment(item?._id)}
                           className="border border-red-500 p-2 px-3 text-xs rounded text-red-500"
-                          disabled={deleteComLoading}
+                          disabled={item?._id === commentId && deleteComLoading}
                         >
-                          {deleteComLoading ? "Please wait" : " Delete Comment"}
+                          {item?._id === commentId && deleteComLoading ? (
+                            <LazyLoadingBtn />
+                          ) : (
+                            " Delete"
+                          )}
                         </button>
                       </td>
                     </tr>
@@ -127,13 +117,13 @@ const Comment = () => {
                   </button>
                 </li>
                 {/* <!-- End previous --> */}
-                {comments?.pagination.prev && (
+                {usercomments?.pagination.prev && (
                   <li
-                    onClick={() => changePage(comments?.pagination.prev)}
+                    onClick={() => changePage(usercomments?.pagination.prev)}
                     className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
                     <button className="page-link">
-                      {comments?.pagination.prev}
+                      {usercomments?.pagination.prev}
                     </button>
                   </li>
                 )}
@@ -142,21 +132,25 @@ const Comment = () => {
                     disabled
                     className="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
                   >
-                    {comments?.pagination.currentPage}
+                    {usercomments?.pagination.currentPage}
                   </button>
                 </li>
-                {comments?.pagination.next && (
+                {usercomments?.pagination.next && (
                   <li
-                    onClick={() => changePage(comments?.pagination.next)}
+                    onClick={() => changePage(usercomments?.pagination.next)}
                     className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                   >
                     <button className="page-link">
-                      {comments?.pagination.next}
+                      {usercomments?.pagination.next}
                     </button>
                   </li>
                 )}
                 {/* <!-- Start next --> */}
-                <li onClick={() => changePage(comments?.pagination.totalPages)}>
+                <li
+                  onClick={() =>
+                    changePage(usercomments?.pagination.totalPages)
+                  }
+                >
                   <button className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                     Next
                   </button>
@@ -180,14 +174,15 @@ const Comment = () => {
           </div>
         </div>
       </section>
-      {/* // <!-- Modal review update --> */}
+      {/* <!-- Modal comment update --> */}
       <div
-        className={` ${open ? "grid" : "hidden"}
-         parmodal top-0 left-0 w-full h-full justify-center pt-[82px] bg-[#000000cc] z-50 fixed  place-items-center
-        `}
+        className={`
+        ${open ? "flex" : "hidden"}
+         parmodal top-0 left-0 w-full h-full justify-center pt-[82px] bg-[#000000cc] z-50 fixed
+      `}
       >
-        <div className="parmodal_modal bg-white w-[370px] h-[330px] pr-4 pl-10 pt-2 pb-8 ">
-          <div className="flex justify-end pb-4">
+        <div className="parmodal_modal  bg-white w-[350px] h-[230px] pr-4 pl-10 pt-2 pb-8">
+          <div className="flex justify-end">
             <button
               onClick={() => setOpen(false)}
               className="p-1 text-white bg-red-500 text-xs"
@@ -196,30 +191,34 @@ const Comment = () => {
             </button>
           </div>
           <h2 className="text-2xl text-gray-300 font-bold pb-6">
-            Upade Your Post Comment
+            Upade Post Comment
           </h2>
-          <form className="flex flex-col gap-4 pr-6">
+          <form
+            onSubmit={handleSubmitUpdateComment((data) =>
+              handleUpdateOneComment(commentBtnId, data)
+            )}
+            className="flex flex-col gap-4 pr-6"
+          >
             <div className="flex flex-col">
               <label className="text-gray-400 pb-4 text-xs font-medium">
                 Comment
               </label>
               <input
                 type="text"
-                className="p-2 border text-sm w-full rounded outline-none"
-                required
+                className="text-sm w-full border-0 border-b"
+                {...registerUpdateComment("comment")}
               />
             </div>
 
             <button
-              type="submit"
               className="p-1 bg-emerald-500 text-white text-sm"
+              disabled={updateComLoading}
             >
-              Update
+              {updateComLoading ? "please wait" : "Update"}
             </button>
           </form>
         </div>
       </div>
-      {/* end modal */}
       <Footer />
     </>
   );

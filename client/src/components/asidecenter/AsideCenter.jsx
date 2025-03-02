@@ -8,90 +8,28 @@ import {
   faPinterest,
 } from "@fortawesome/free-brands-svg-icons";
 import { faX } from "@fortawesome/free-solid-svg-icons";
-import useUser from "../../hooks/usersHook";
 import globalService from "../../services/globalService";
-import { toast } from "react-toastify";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
 import Address from "../address/Address";
+import useUserLogic from "../../hooks/shared/userLogic";
 const AsideCenter = () => {
   const [openUpdateUser, setOpenUpdateUser] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
-  const { currentUser } = useSelector((state) => state.user);
   const {
-    getUserProfileByHimSelfQuery,
-    updateUserProfileByUserHimSelfMutation,
-    changeUserPasswordByUserHimSelfMutation,
-    deleteUserAccountByUserHimSelfMutation,
-  } = useUser();
-
-  //
-  const { isPending, data: user } = getUserProfileByHimSelfQuery(); // ! you have to put ()for calling the fn
-  const { isPending: updateProLoading } =
-    updateUserProfileByUserHimSelfMutation;
-  const { isPending: changePassLoading } =
-    changeUserPasswordByUserHimSelfMutation;
-  const { isPending: deleteProLoading } =
-    deleteUserAccountByUserHimSelfMutation;
-  //
-  const {
-    register: registerProfile,
-    handleSubmit: handleSubmitProfile,
-    getValues: getValuesProfile,
-    reset: resetProfile,
-    formState: { errors: errorsProfile },
-  } = useForm();
-
-  const {
-    register: registerPassword,
-    handleSubmit: handleSubmitPassword,
+    handleChangePassword,
+    handleUpdateUserProfile,
+    registerPassword,
+    handleSubmitPassword,
     watch,
-    reset: resetPassword,
-    formState: { errors: errorsPassword },
-  } = useForm();
-
-  const handleUpdateUserProfile = (data) => {
-    const name = getValuesProfile("name");
-    const phone = getValuesProfile("phone");
-    const profileImg = getValuesProfile("profileImg");
-
-    if (!name && !phone && (!profileImg || profileImg.length === 0)) {
-      toast.error("Write some thing at any input to update !");
-    } else {
-      if (!currentUser) {
-        toast.error("Sign in first");
-      } else {
-        const userForm = new FormData();
-        if (name) userForm.append("name", name);
-        if (phone) userForm.append("phone", phone);
-        if (profileImg?.length) userForm.append("profileImg", profileImg[0]);
-
-        updateUserProfileByUserHimSelfMutation.mutate(userForm, {
-          onSuccess: () => {
-            toast.success("Profile Has Been Updated Successfully");
-          },
-          onError: () => {},
-        });
-        resetProfile();
-      }
-    }
-  };
-  const handleChangePassword = (data) => {
-    if (!currentUser) {
-      toast.error("Sign in first");
-    } else {
-      changeUserPasswordByUserHimSelfMutation.mutate(data, {
-        onSuccess: (res) => {
-          toast.success("Password Has Been Changed Successfully");
-        },
-        onError: (res) => {
-          toast.error(res?.response?.data?.errors[0]?.msg);
-        },
-      });
-      resetPassword();
-    }
-  };
-
+    errorsPassword,
+    errorsProfile,
+    updateProLoading,
+    changePassLoading,
+    deleteProLoading,
+    isPending,
+    user,
+    handleSubmitProfile,
+    registerProfile,
+  } = useUserLogic();
   return (
     <div className="mr-24">
       {/* <!-- coverimg --> */}
@@ -379,7 +317,6 @@ const AsideCenter = () => {
         </div>
       </div>
       <Address />
-      
     </div>
   );
 };

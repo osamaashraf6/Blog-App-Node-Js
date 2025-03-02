@@ -4,7 +4,14 @@ import "./Navbar.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/userslice/apiCalls";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleDown,
+  faUser,
+  faBookmark,
+  faBoxArchive,
+  faThumbsUp,
+  faComment,
+} from "@fortawesome/free-solid-svg-icons";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
@@ -18,11 +25,14 @@ const Navbar = () => {
 
   return (
     <div className="pb-24">
-      <nav className="nav fixed w-full z-50 bg-white mb-24 shadow-sm py-2" id="nav">
+      <nav
+        className="nav fixed w-full z-50 bg-white mb-24 shadow-sm py-2"
+        id="nav"
+      >
         <div className="container">
           <div className="parnav">
             <div className="brand">
-              <Link to="/home">Blog App</Link>
+              <Link to="/home">Medium</Link>
             </div>
             <ul>
               <li>
@@ -72,7 +82,7 @@ const Navbar = () => {
                         to="/profile"
                         className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
                       >
-                        <i className="fas fa-user-circle"></i> Profile
+                        <FontAwesomeIcon icon={faUser} /> Profile
                       </Link>
                     </li>
                     <li>
@@ -81,7 +91,7 @@ const Navbar = () => {
                         to="/comment"
                         className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
                       >
-                        <i className="fas fa-comments"></i> Comments
+                        <FontAwesomeIcon icon={faComment} /> Comments
                       </Link>
                     </li>
                     <li>
@@ -90,7 +100,7 @@ const Navbar = () => {
                         to="/like"
                         className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
                       >
-                        <i className="fas fa-receipt"></i> Likes
+                        <FontAwesomeIcon icon={faThumbsUp} /> Likes
                       </Link>
                     </li>
                     <li>
@@ -99,7 +109,7 @@ const Navbar = () => {
                         to="/archive"
                         className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
                       >
-                        <i className="fas fa-receipt"></i> Archives
+                        <FontAwesomeIcon icon={faBoxArchive} /> Archives
                       </Link>
                     </li>
                     <li>
@@ -108,7 +118,7 @@ const Navbar = () => {
                         to="/saved"
                         className="hover:bg-slate-200 pt-3 border-b flex pb-2 px-3 w-full text-slate-500 gap-2 items-center text-sm font-medium"
                       >
-                        <i className="fas fa-receipt"></i> Saveds
+                        <FontAwesomeIcon icon={faBookmark} /> Saveds
                       </Link>
                     </li>
                   </ul>
@@ -119,7 +129,7 @@ const Navbar = () => {
             <div className="user">
               {currentUser ? (
                 <>
-                  <span>{currentUser.data.name}</span>
+                  <Link to="/profile">{currentUser?.data?.name}</Link>
                   <span className="logout" onClick={handleLogOut}>
                     Logout
                   </span>

@@ -3,12 +3,13 @@ import { Link, useSearchParams } from "react-router-dom";
 import "./SimilarPosts.scss";
 import usePost from "../../../hooks/postsHook";
 import globalService from "../../../services/globalService";
+import LazyLoadingItems from "../../LazyLoadingItems";
 
 const Posts = () => {
   const [searchParams] = useSearchParams();
   const category = searchParams.get("category");
-  const { getAllPostQuery } = usePost();
-  const { isPending, data: posts } = getAllPostQuery({
+  const { useGetAllPostQuery } = usePost();
+  const { isPending, data: posts } = useGetAllPostQuery({
     limit: 6,
     sort: "title",
     category,
@@ -16,10 +17,10 @@ const Posts = () => {
 
   return (
     <>
-      <h3 className="other-posts">Other posts you may like</h3>
+      <h3 className="other-posts text-emerald-400 font-medium">Other posts you may like: </h3>
       <div className="posts">
         {isPending ? (
-          <p>Loading Posts...</p>
+          <LazyLoadingItems />
         ) : posts?.data?.length > 0 ? (
           posts?.data.map((item) => (
             <div className="post" key={item._id}>

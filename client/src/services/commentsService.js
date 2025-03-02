@@ -63,7 +63,7 @@ export const getAllCommentOfUser = async (
 };
 
 // updateOneComment
-export const updateOneComment = async (id, formData) => {
+export const updateOneComment = async ({ id, formData }) => {
   const res = await apiClient.put(
     `${globalService.routes.comments}/${id}`,
     formData

@@ -12,7 +12,7 @@ const SavedSchema = new mongoose.Schema<ISaved>(
 // 3. (pre&post, statics, virtuals) CRUD
 
 SavedSchema.pre<ISaved>(/^find/, async function (next) {
-  this.populate({ path: "postId", select: "title postImg briefDesc" });
+  this.populate({ path: "postId", select: "title postImg briefDesc category" });
   next();
 });
 export default mongoose.models.SavedModel ||

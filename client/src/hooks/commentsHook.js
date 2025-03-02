@@ -20,7 +20,7 @@ const useComment = () => {
   });
 
   // ! getAll with filter
-  const getAllCommentOfPostQuery = ({
+  const useGetAllCommentOfPostQuery = ({
     postId,
     limit,
     page,
@@ -37,7 +37,7 @@ const useComment = () => {
     });
   };
   // ! getAll with filter
-  const getAllCommentOfUserQuery = ({
+  const useGetAllCommentOfUserQuery = ({
     limit,
     page,
     sort,
@@ -70,8 +70,8 @@ const useComment = () => {
 
   return {
     createOneCommentMutation,
-    getAllCommentOfPostQuery,
-    getAllCommentOfUserQuery,
+    useGetAllCommentOfPostQuery,
+    useGetAllCommentOfUserQuery,
     updateOneCommentMutation,
     deleteOneCommentMutation,
   };
