@@ -13,7 +13,7 @@
     - [Setup](#setup)
     - [Install](#install)
     - [Usage](#usage)
-    - [Run tests](#run-tests)
+    
   - [👥 Authors :  ](#-authors---)
   - [🔭 Future Features ](#-future-features-)
   - [🤝 Contributing ](#-contributing-)
@@ -60,6 +60,16 @@
     <li>GitHub</li>
   </ul>
 </details>
+<details>
+ <summary>Backend</summary>
+  <ul>
+    <li>Node Js</li>
+    <li>Express Js</li>
+    <li>Typescript</li>
+  </ul>
+</details>
+
+
 
 ### Key Features <a name="key-features"></a>
 
@@ -71,11 +81,13 @@
 - [x] Remove blog posts and Display the last three recent posts. ⤵👌💯
 
 
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-<!-- LIVE DEMO -->
 
+ 
+### 🚀 Live Demo
+ Demo: [Blog App](https://blog-mern-inky.vercel.app/)
+
+ 
 
 ## 💻 Getting Started <a name="getting-started"></a>
 
@@ -94,8 +106,8 @@ Clone this repository to your desired folder:
 
 
 ```sh
-  cd Blog-App-Node-Js
-  git clone https://github.com/osamaashraf6/Blog-App-Node-Js.git
+  cd Blog-App-Mern-Stack
+  git clone https://github.com/osamaashraf6/Blog-App-Mern-Stack
 ```
 
 
@@ -118,14 +130,7 @@ npm start
 ```
 
 
-### Run tests
 
-To run tests, run the following command:
-
-```sh
- npx hint .
- npx eslint .
-```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
